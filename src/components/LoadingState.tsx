@@ -1,0 +1,1 @@
+export function LoadingState({ label = 'Đang tải trải nghiệm...' }: { label?: string }) { return <div className="flex min-h-52 items-center justify-center gap-3 text-sm text-neutral-500"><span className="h-5 w-5 animate-spin rounded-full border-2 border-red-800 border-t-transparent" />{label}</div> }

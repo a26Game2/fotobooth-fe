@@ -1,0 +1,2 @@
+import { AlertCircle, RefreshCw } from 'lucide-react'
+export function ErrorState({ message, retry }: { message: string; retry?: () => void }) { return <div className="rounded-2xl border border-red-100 bg-red-50 p-8 text-center"><AlertCircle className="mx-auto mb-3 text-red-700" /><p className="font-semibold text-red-950">Không thể tải dữ liệu</p><p className="mx-auto mt-1 max-w-md text-sm text-red-800">{message}</p>{retry && <button onClick={retry} className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-red-800"><RefreshCw size={15}/> Thử lại</button>}</div> }
