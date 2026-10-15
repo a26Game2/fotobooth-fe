@@ -2,7 +2,67 @@ import { ArrowRight, MapPin, ReceiptText } from 'lucide-react'
 import type { City, Quote, ServiceDetail } from '../types'
 import { money } from '../lib/format'
 
-export function PriceSummary({ service, city, quote, loading, onBook }: { service: ServiceDetail; city?: City; quote?: Quote; loading: boolean; onBook: () => void }) {
-  const entries: Array<[string, number | null]> = quote ? [['Giá gói dịch vụ', quote.basePrice], ...(quote.extraHours > 0 ? [['Thêm giờ', quote.extraHourAmount] as [string, number | null]] : []), ['Phí triển khai', quote.travelFee], ['VAT ' + quote.vatRate + '%', quote.vatAmount]] : []
-  return <aside className="rounded-2xl bg-ink p-6 text-white shadow-card lg:sticky lg:top-6"><div className="flex items-start justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[.18em] text-red-400">Tóm tắt booking</p><h2 className="mt-2 text-xl font-extrabold">{service.name}</h2></div><ReceiptText className="text-red-400" /></div><div className="mt-5 border-y border-white/15 py-4 text-sm"><div className="flex items-center gap-2 text-white/75"><MapPin size={15}/>{city?.name || 'Chọn thành phố'}</div>{quote && <><div className="mt-3 flex justify-between gap-3 text-white/75"><span>{quote.mainPackage.name}</span><span>{money(quote.mainPackage.price)}</span></div>{quote.addons.map(addon => <div key={addon.serviceId} className="mt-2 flex justify-between gap-3 text-white/75"><span>{addon.name} × {addon.quantity}</span><span>{money(addon.totalPrice)}</span></div>)}</>}</div><div className="space-y-2 py-4 text-sm">{entries.map(([label, value]) => <div key={String(label)} className="flex justify-between text-white/70"><span>{label}</span><span>{money(value)}</span></div>)}{loading && <div className="flex items-center gap-2 pt-2 text-xs text-white/55"><span className="h-3 w-3 animate-spin rounded-full border-2 border-red-400 border-t-transparent"/> Đang cập nhật báo giá...</div>}</div><div className="border-t border-white/15 pt-4"><p className="text-xs font-bold uppercase tracking-[.16em] text-white/55">{quote?.pricingPending ? 'Báo giá' : 'Tổng tạm tính'}</p><p className="mt-1 font-display text-2xl font-bold text-white">{quote?.pricingPending ? 'Liên hệ để xác nhận' : quote ? money(quote.estimatedTotal) : 'Chọn cấu hình'}</p></div>{(quote?.city.note || city?.note) && <p className="mt-4 rounded-lg bg-white/8 px-3 py-2 text-xs leading-5 text-white/70">{quote?.city.note || city?.note}</p>}<p className="mt-4 text-xs leading-5 text-white/50">Giá tạm tính chưa bao gồm phí vận chuyển ngoài khu vực và các hạng mục thiết kế/setup riêng theo yêu cầu.</p><button disabled={!quote || loading} onClick={onBook} className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-red-700 px-5 py-3.5 text-sm font-extrabold transition hover:bg-red-600 disabled:cursor-not-allowed disabled:bg-white/15">Gửi yêu cầu booking <ArrowRight size={17}/></button></aside>
+interface Props {
+  service: ServiceDetail
+  city?: City
+  quote?: Quote
+  loading: boolean
+  voucherCode: string
+  onVoucherCodeChange: (value: string) => void
+  onBook: () => void
+}
+
+export function PriceSummary({ service, city, quote, loading, voucherCode, onVoucherCodeChange, onBook }: Props) {
+  const entries: Array<[string, number | null]> = quote
+    ? [
+        ['Giá gói dịch vụ', quote.basePrice],
+        ...(quote.extraHours > 0 ? [['Thêm giờ', quote.extraHourAmount] as [string, number | null]] : []),
+        ['Phí triển khai', quote.travelFee],
+        [`VAT ${quote.vatRate}%`, quote.vatAmount],
+      ]
+    : []
+
+  return (
+    <aside className="rounded-2xl bg-ink p-6 text-white shadow-card lg:sticky lg:top-6">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[.18em] text-red-400">Tóm tắt booking</p>
+          <h2 className="mt-2 text-xl font-extrabold">{service.name}</h2>
+        </div>
+        <ReceiptText className="text-red-400" />
+      </div>
+
+      <div className="mt-5 border-y border-white/15 py-4 text-sm">
+        <div className="flex items-center gap-2 text-white/75"><MapPin size={15} />{city?.name || 'Chọn thành phố'}</div>
+        {quote && <>
+          <div className="mt-3 flex justify-between gap-3 text-white/75"><span>{quote.mainPackage.name}</span><span>{money(quote.mainPackage.price)}</span></div>
+          {quote.addons.map(addon => <div key={addon.serviceId} className="mt-2 flex justify-between gap-3 text-white/75"><span>{addon.name} × {addon.quantity}</span><span>{money(addon.totalPrice)}</span></div>)}
+        </>}
+      </div>
+
+      <div className="space-y-2 py-4 text-sm">
+        {entries.map(([label, value]) => <div key={label} className="flex justify-between text-white/70"><span>{label}</span><span>{money(value)}</span></div>)}
+        {loading && <div className="flex items-center gap-2 pt-2 text-xs text-white/55"><span className="h-3 w-3 animate-spin rounded-full border-2 border-red-400 border-t-transparent" /> Đang cập nhật báo giá...</div>}
+      </div>
+
+      <div className="border-t border-white/15 pt-4">
+        <p className="text-xs font-bold uppercase tracking-[.16em] text-white/55">{quote?.pricingPending ? 'Báo giá' : 'Tổng tạm tính'}</p>
+        <p className="mt-1 font-display text-2xl font-bold text-white">{quote?.pricingPending ? 'Liên hệ để xác nhận' : quote ? money(quote.estimatedTotal) : 'Chọn cấu hình'}</p>
+      </div>
+
+      <label className="mt-5 block border-t border-white/15 pt-4">
+        <span className="mb-2 block text-xs font-bold uppercase tracking-[.13em] text-white/60">Mã ưu đãi / voucher</span>
+        <input
+          className="w-full rounded-xl border border-white/20 bg-white px-3 py-2.5 text-sm font-medium text-ink outline-none transition placeholder:text-neutral-400 focus:border-red-400 focus:ring-2 focus:ring-red-400/30"
+          value={voucherCode}
+          onChange={event => onVoucherCodeChange(event.target.value.toUpperCase())}
+          placeholder="Nhập mã giảm giá"
+        />
+      </label>
+
+      {(quote?.city.note || city?.note) && <p className="mt-4 rounded-lg bg-white/8 px-3 py-2 text-xs leading-5 text-white/70">{quote?.city.note || city?.note}</p>}
+      <p className="mt-4 text-xs leading-5 text-white/50">Giá tạm tính chưa bao gồm phí vận chuyển ngoài khu vực và các hạng mục thiết kế/setup riêng theo yêu cầu.</p>
+      <button disabled={!quote || loading} onClick={onBook} className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-red-700 px-5 py-3.5 text-sm font-extrabold transition hover:bg-red-600 disabled:cursor-not-allowed disabled:bg-white/15">Đặt lịch ngay <ArrowRight size={17} /></button>
+    </aside>
+  )
 }

@@ -1,4 +1,4 @@
-export interface Service { id: string; name: string; slug: string; description: string | null; coverImagePath: string | null; startingPrice: number; role?: 'MAIN' | 'ADDON'; mediaType?: 'IMAGE' | 'VIDEO' | null; packageName?: string | null; extraHourPrice?: number | null; note?: string | null; hotLevel?: 1 | 2 | 3 | null }
+export interface Service { id: string; name: string; slug: string; description: string | null; coverImagePath: string | null; startingPrice: number; isActive?: boolean; role?: 'MAIN' | 'ADDON'; mediaType?: 'IMAGE' | 'VIDEO' | null; packageName?: string | null; extraHourPrice?: number | null; note?: string | null; hotLevel?: 1 | 2 | 3 | null }
 export interface MainPackage { id: string; serviceId: string; code: string; name: string; durationHours: number | null; isFullDay: boolean; price: number | null; includedMediaCount: number | null; sortOrder: number; isActive: boolean }
 export interface AddonPricing { defaultPrice: number | null; includedQuantity: number; incrementQuantity: number; incrementPrice: number | null; unitLabel: string }
 export interface AddonService extends Service { addonPricing?: AddonPricing | null }

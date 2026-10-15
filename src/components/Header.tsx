@@ -1,2 +1,12 @@
 import { Link } from 'react-router-dom'
-export function Header() { return <header className="absolute inset-x-0 top-0 z-20 px-5 py-5 text-white"><div className="mx-auto flex max-w-7xl items-center justify-between"><Link to="/" className="text-2xl font-extrabold tracking-[-.13em]">T<span className="text-red-500">—</span>RED</Link><a href="#dich-vu" className="text-sm font-bold uppercase tracking-[.16em] text-white/80 transition hover:text-white">Dịch vụ</a></div></header> }
+
+export function Header() {
+  return (
+    <header className="absolute inset-x-0 top-0 z-20 px-5 py-5 text-white">
+      <div className="mx-auto flex max-w-7xl items-center justify-between">
+        <Link to="/" className="text-2xl font-extrabold tracking-[-.13em]">FOTOBOOTH<span className="text-red-500">.</span>VN</Link>
+        <a href="#dich-vu" className="text-sm font-bold uppercase tracking-[.16em] text-white/80 transition hover:text-white">Dịch vụ</a>
+      </div>
+    </header>
+  )
+}
